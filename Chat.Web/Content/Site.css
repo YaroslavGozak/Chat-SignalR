@@ -103,15 +103,6 @@ button:focus {
 .clearfix {
   clear: left;
 }
-.col-md-2 {
-  padding: 0;
-}
-.col-md-7 {
-  width: 61.3%;
-}
-.col-md-3 {
-  width: 22%;
-}
 span {
   color: #ddd;
 }
@@ -126,11 +117,17 @@ span:hover {
   border: 1px solid #ccc;
   border-radius: 2px;
 }
+@media screen and (max-width: 766px) {
+    .main-container {
+        height: calc(100% - 40px) !important;
+    }
+}
 .main-container .left {
   background: #157cce;
-  height: 100%;
+  height: 100% !important;
   color: white;
 }
+
 .main-container .left a {
   color: #eee;
 }
@@ -217,6 +214,7 @@ span:hover {
   line-height: 50px;
   position: absolute;
   bottom: 0;
+  margin-left: -15px;
 }
 .main-container .left .user-avatar {
   float: left;
@@ -244,6 +242,7 @@ span:hover {
   padding: 0;
   height: 100%;
 }
+
 .main-container .middle .chat-header {
   height: 40px;
   border-bottom: 1px solid #eee;
@@ -545,5 +544,12 @@ input[type="file"] {
   max-height: 200px;
   background: white;
   border: 2px solid white;
+}
+.navbar-toggle {
+    background-color: #157cce;
+    cursor: pointer;
+}
+.navbar-toggle .icon-bar{
+    background-color: #ccc;
 }
 /*# sourceMappingURL=Site.css.map */

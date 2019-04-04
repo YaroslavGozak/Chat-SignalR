@@ -121,7 +121,7 @@ namespace Chat.Web.Controllers
                 int index = 0;
                 if (int.TryParse(model.Avatar, out index))
                 {
-                    if (index > StaticResources.Avatars.Count - 1)
+                    if (index >= StaticResources.Avatars.Count)
                         index = 0;
                 }
 

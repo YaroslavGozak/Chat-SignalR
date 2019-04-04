@@ -36,7 +36,7 @@ namespace Chat.Web.Controllers
                     // Some basic checks...
                     if (file != null && !FileValidator.ValidSize(file.ContentLength))
                         return Json("File size too big. Maximum File Size: 500KB");
-                    else if (FileValidator.ValidType(file.ContentType))
+                    else if (!FileValidator.ValidType(file.ContentType))
                         return Json("This file extension is not allowed!");
                     else
                     {

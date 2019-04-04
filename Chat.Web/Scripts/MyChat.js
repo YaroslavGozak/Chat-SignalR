@@ -1,12 +1,13 @@
 ﻿$(function () {
-
+    const chatRoomKey = "chat-room-key";
     var chatHub = $.connection.chatHub;
     $.connection.hub.start().done(function () {
         console.log("SignalR started");
+        var roomName = localStorage.getItem(chatRoomKey) || "Lobby";
+        console.log("Getting room: " + roomName);
         model.roomList();
         model.userList();
-        model.joinedRoom = "Lobby";
-        model.joinRoom();
+        model.joinRoom(roomName);
     });
 
     // Client Operations
@@ -40,8 +41,7 @@
 
     $('ul#room-list').on('click', 'a', function () {
         var roomName = $(this).text();
-        model.joinedRoom = roomName;
-        model.joinRoom();
+        model.joinRoom(roomName);
         model.chatMessages.removeAll();
         $("input#iRoom").val(roomName);
         $("#joinedRoom").text(roomName);
@@ -110,12 +110,15 @@
             self.message("");
         },
 
-        joinRoom: function () {
+        joinRoom: function (roomName) {
             var self = this;
+            self.joinedRoom = roomName;
             chatHub.server.join(self.joinedRoom).done(function () {
                 self.userList();
                 self.messageHistory();
             });
+            console.log("Setting room to " + roomName);
+            localStorage.setItem(chatRoomKey, self.joinedRoom);
         },
 
         roomList: function () {

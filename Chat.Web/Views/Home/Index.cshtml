@@ -11,9 +11,16 @@
     <script src="~/Scripts/MyScript.js"></script>
     <script src="~/signalr/hubs"></script>
 }
-
+<div class="row">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#chatRooms">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+</div>
 <div class="row main-container">
-    <div class="col-md-2 left">
+
+    <div class="col-xs-12 col-sm-4 col-md-2 left collapse in" id="chatRooms">
         <div class="header">
             <h5>Chat Rooms</h5>
             <a href="#" id="create-room" data-toggle="modal" data-target="#create-room-modal"><span class="glyphicon glyphicon-plus"></span></a>
@@ -21,7 +28,7 @@
         <div class="rooms">
             <div>
                 <ul id="room-list" data-bind="foreach: chatRooms">
-                    <li><a href="#" data-bind="text: $data.name, clickLink: joinRoom"></a></li>
+                    <li><a href="#" data-bind="text: $data.name, clickLink: joinRoom" data-toggle="collapse" data-target="#chatRooms"></a></li>
                 </ul>
             </div>
         </div>
@@ -41,7 +48,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-7 middle">
+    <div class="col-xs-12 col-sm-8 col-md-7 middle">
         <div class="chat-header">
             <h5 id="joinedRoom">Lobby</h5>
             <button data-toggle="modal" data-target="#remove-room-modal" class="btnDeleteRoom glyphicon glyphicon-remove"></button>
@@ -108,7 +115,7 @@
             <input id="chat-message" type="text" value="" data-bind="value:message, valueUpdate: 'afterkeydown', event: { keypress: onEnter }" placeholder="What's on your mind?" />
         </div>
     </div>
-    <div class="col-md-3 right">
+    <div class="col-xs-12 col-md-3 right hidden-sm hidden-xs">
         <div class="header">
             <h5>Who's Here (<span data-bind="text: filteredChatUsers().length">0</span>)</h5>
         </div>
