@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using Chat.Web.Helpers;
+using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(Chat.Web.Startup))]
@@ -10,6 +11,8 @@ namespace Chat.Web
         {
             ConfigureAuth(app);
             app.MapSignalR();
+
+            app.CreatePerOwinContext<ProfileHelper>(ProfileHelper.Create);
         }
     }
 }

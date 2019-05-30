@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.SignalR;
-using Chat.Web.Models.ViewModels;
-using Chat.Web.Models;
+using System.Web;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.Identity.Owin;
+using Chat.Web.Models.ViewModels;
+using Chat.Web.Models;
+using Chat.Web.Helpers;
 using AutoMapper;
 
 namespace Chat.Web.Hubs
@@ -29,6 +32,34 @@ namespace Chat.Web.Hubs
         /// (We don't want to share connectionId)
         /// </summary>
         private readonly static Dictionary<string, string> _ConnectionsMap = new Dictionary<string, string>();
+
+        private HttpContext _httpContext;
+
+        public HttpContext HttpContext
+        {
+            get
+            {
+                return _httpContext ?? HttpContext.Current;
+            }
+            set
+            {
+                _httpContext = value;
+            }
+        }
+
+        private static ProfileHelper _profileHelper;
+
+        private ProfileHelper _ProfileHelper
+        {
+            get
+            {   _profileHelper = _profileHelper ?? HttpContext.GetOwinContext().Get<ProfileHelper>();
+                return _profileHelper;
+            }
+            set
+            {
+                _profileHelper = value;
+            }
+        }
         #endregion
 
         public void Send(string roomName, string message)
@@ -185,7 +216,17 @@ namespace Chat.Web.Hubs
                 using (var db = new ApplicationDbContext())
                 {
                     // Delete from database
-                    var room = db.Rooms.Where(r => r.Name == roomName && r.UserAccount.UserName == IdentityName).FirstOrDefault();
+                    var room = db.Rooms.Where(r => r.Name == roomName).FirstOrDefault();
+                    if(room == null)
+                    {
+                        Clients.Caller.onError("No such room.");
+                        return;
+                    }
+                    if(room.UserAccount.UserName != IdentityName)
+                    {
+                        Clients.Caller.onError("Only room creator can delete room. \nAsk " + room.UserAccount.UserName + " to delete.");
+                        return;
+                    }
                     db.Rooms.Remove(room);
                     db.SaveChanges();
 
@@ -204,39 +245,6 @@ namespace Chat.Web.Hubs
             {
                 Clients.Caller.onError("Can't delete this chat room.");
             }
-        }
-
-        public IEnumerable<MessageViewModel> GetMessageHistory(string roomName)
-        {
-            using (var db = new ApplicationDbContext())
-            {
-                var messageHistory = db.Messages.Where(m => m.ToRoom.Name == roomName)
-                    .OrderByDescending(m => m.Timestamp)
-                    .Take(20)
-                    .AsEnumerable()
-                    .Reverse()
-                    .ToList();
-
-                return Mapper.Map<IEnumerable<Message>, IEnumerable<MessageViewModel>>(messageHistory);
-            }
-        }
-
-        public IEnumerable<RoomViewModel> GetRooms()
-        {
-            using (var db = new ApplicationDbContext())
-            {
-                // First run?
-                if (_Rooms.Count == 0)
-                {
-                    foreach (var room in db.Rooms)
-                    {
-                        var roomViewModel = Mapper.Map<Room, RoomViewModel>(room);
-                        _Rooms.Add(roomViewModel);
-                    }
-                }
-            }
-
-            return _Rooms.ToList();
         }
 
         public IEnumerable<UserViewModel> GetUsers(string roomName)
@@ -258,9 +266,9 @@ namespace Chat.Web.Hubs
                     userViewModel.CurrentRoom = "";
 
                     _Connections.Add(userViewModel);
-                    _ConnectionsMap.Add(IdentityName, Context.ConnectionId);
+                    _ConnectionsMap.Add(user.UserName, Context.ConnectionId);
 
-                    Clients.Caller.getProfileInfo(user.DisplayName, user.Avatar);
+                    //Clients.Caller.getProfileInfo(user.DisplayName, user.Avatar);
                 }
                 catch (Exception ex)
                 {

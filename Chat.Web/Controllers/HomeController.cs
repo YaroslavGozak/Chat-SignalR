@@ -1,21 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.IO;
 using Chat.Web.Helpers;
-using Microsoft.AspNet.SignalR;
 using Chat.Web.Hubs;
 using Chat.Web.Models.ViewModels;
 using Chat.Web.Models;
 using System.Text.RegularExpressions;
 using AutoMapper;
+using System.Web;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace Chat.Web.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+        private ApplicationUser _currentUser;
+        private ProfileHelper _profileHelper;
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
+        public ApplicationUser CurrentUser
+        {
+            get
+            {
+                return _currentUser ?? _userManager.FindByNameAsync(System.Web.HttpContext.Current.User.Identity.Name).Result;
+            }
+            set
+            {
+                _currentUser = value;
+            }
+        }
+
+        public ProfileHelper ProfileHelper
+        {
+            get
+            {
+                return _profileHelper ?? HttpContext.GetOwinContext().Get<ProfileHelper>();
+            }
+            private set
+            {
+                _profileHelper = value;
+            }
+        }
+
+        //public HomeController(ProfileHelper profileHelper)
+        //{
+        //    _profileHelper = profileHelper;
+        //}
+
+        [AllowAnonymous]
         public ActionResult Index()
         {
             if (!User.Identity.IsAuthenticated)
@@ -71,7 +131,7 @@ namespace Chat.Web.Controllers
 
                             // Send image-message to group
                             var messageViewModel = Mapper.Map<Message, MessageViewModel>(msg);
-                            var hub = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+                            var hub = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
                             hub.Clients.Group(senderViewModel.CurrentRoom).newMessage(messageViewModel);
                         }
 
@@ -86,6 +146,42 @@ namespace Chat.Web.Controllers
             return Json("No files selected");
 
         } // Upload
+
+        public ActionResult Offline()
+        {
+            return View();
+        }
+
+        public JsonResult GetRooms()
+        {
+            var rooms = ProfileHelper.GetRooms();
+            return new JsonResult
+            {
+                Data = rooms,
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
+        }
+
+        [HttpGet]
+        public JsonResult GetMessageHistory(string roomName)
+        {
+            var messages = ProfileHelper.GetMessageHistory(roomName);
+            return new JsonResult
+            {
+                Data = messages,
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
+        }
+
+        public JsonResult GetProfileInfo()
+        {
+            var profile = ProfileHelper.GetProfileInfo();
+            return new JsonResult
+            {
+                Data = profile,
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
+        }
 
     }
 }

@@ -19,17 +19,9 @@ namespace Chat.Web.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ProfileHelper _profileHelper;
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        public AccountController()
-        {
-        }
-
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
-        {
-            UserManager = userManager;
-            SignInManager = signInManager;
-        }
 
         public ApplicationSignInManager SignInManager
         {
@@ -52,6 +44,19 @@ namespace Chat.Web.Controllers
             private set
             {
                 _userManager = value;
+            }
+        }
+
+        public ProfileHelper ProfileHelper
+        {
+            get
+            {
+                _profileHelper = _profileHelper ?? HttpContext.GetOwinContext().Get<ProfileHelper>();
+                return _profileHelper;
+            }
+            private set
+            {
+                _profileHelper = value;
             }
         }
 
@@ -89,6 +94,7 @@ namespace Chat.Web.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    await ProfileHelper.SetUser(model.Username, model.Password);
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -147,10 +153,10 @@ namespace Chat.Web.Controllers
         }
 
         //
-        // POST: /Account/LogOff
+        // POST: /Account/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult LogOff()
+        public ActionResult Logout()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Login", "Account");

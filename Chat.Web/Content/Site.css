@@ -30,23 +30,26 @@ button:focus {
 .form-control {
   height: 40px;
 }
+.glyphicon-send{
+    cursor: pointer;
+}
 .lr-container {
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  margin: 0 auto;
-  padding: 20px;
-  position: relative;
-  top: 50%;
-  -moz-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  -o-transform: translateY(-50%);
-  -webkit-transform: translateY(-50%);
-  transform: translateY(-50%);
-  overflow: hidden;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    top: 50%;
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    overflow: hidden;
 }
 .login-container {
-  width: 350px;
+  max-width: 350px;
   max-height: 450px;
   height: 430px;
 }
@@ -67,7 +70,7 @@ button:focus {
   font-weight: bold;
 }
 .register-container {
-  width: 350px;
+  max-width: 350px;
   max-height: 600px;
 }
 .register-container .btn-register {
@@ -122,10 +125,15 @@ span:hover {
         height: calc(100% - 40px) !important;
     }
 }
-.main-container .left {
+#chatRoomsLg.left {
   background: #157cce;
   height: 100% !important;
   color: white;
+}
+
+#chatRooms.left {
+    background: #157cce;
+    color: white;
 }
 
 .main-container .left a {
@@ -553,3 +561,13 @@ input[type="file"] {
     background-color: #ccc;
 }
 /*# sourceMappingURL=Site.css.map */
+@media screen and (max-width: 766px) {
+    #chatRoomsLg {
+        display: none !important;
+    }
+}
+@media screen and (min-width: 767px) {
+    #chatRooms {
+        display: none !important;
+    }
+}

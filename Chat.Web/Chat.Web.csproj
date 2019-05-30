@@ -181,6 +181,7 @@
     </Compile>
     <Compile Include="Helpers\BasicEmojis.cs" />
     <Compile Include="Helpers\FileValidator.cs" />
+    <Compile Include="Helpers\ProfileHelper.cs" />
     <Compile Include="Helpers\StaticResources.cs" />
     <Compile Include="Hubs\ChatHub.cs" />
     <Compile Include="Mappings\MessageProfile.cs" />
@@ -215,6 +216,9 @@
     <Content Include="Content\icons\avatar2.png" />
     <Content Include="Content\icons\avatar3.png" />
     <Content Include="Content\icons\avatar4.png" />
+    <Content Include="Content\icons\image_icon_128.png" />
+    <Content Include="Content\icons\image_icon_192.png" />
+    <Content Include="Content\icons\image_icon_512.png" />
     <Content Include="Content\icons\photo1.png" />
     <Content Include="Content\icons\smile1.png" />
     <Content Include="Content\screenshots\android.png" />
@@ -225,16 +229,22 @@
     <Content Include="Content\Site.min.css">
       <DependentUpon>Site.css</DependentUpon>
     </Content>
+    <Content Include="Content\toastr.css" />
+    <Content Include="Content\toastr.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="index.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Site.less" />
     <Content Include="Content\Site.css.map">
       <DependentUpon>Site.css</DependentUpon>
     </Content>
+    <Content Include="Content\toastr.scss" />
+    <Content Include="Content\toastr.less" />
+    <Content Include="manifest.json" />
     <None Include="Properties\PublishProfiles\wtt.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -253,7 +263,10 @@
     <Content Include="Scripts\MyScript.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\toastr.js" />
+    <Content Include="Scripts\toastr.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="service-worker.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -272,6 +285,7 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
+    <Content Include="Views\Home\Offline.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

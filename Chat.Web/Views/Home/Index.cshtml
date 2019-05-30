@@ -2,14 +2,18 @@
     ViewBag.Title = "Home Page";
 }
 
+<link rel="stylesheet" type="text/css" href="~/Content/toastr.min.css">
+
 @section scripts {
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
     <script src="~/Scripts/knockout-3.4.2.js"></script>
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    <script src="~/Scripts/toastr.min.js"></script>
     <script src="~/Scripts/MyChat.js"></script>
     <script src="~/Scripts/MyScript.js"></script>
     <script src="~/signalr/hubs"></script>
+
 }
 <div class="row">
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#chatRooms">
@@ -19,9 +23,36 @@
     </button>
 </div>
 <div class="row main-container">
-
-    <div class="col-xs-12 col-sm-4 col-md-2 left collapse in" id="chatRooms">
+    <div class="col-xs-12 col-sm-4 col-md-2 left collapse in" id="chatRoomsLg">
         <div class="header">
+            <h5>Chat Rooms</h5>
+            <a href="#" id="create-room" data-toggle="modal" data-target="#create-room-modal"><span class="glyphicon glyphicon-plus"></span></a>
+        </div>
+        <div class="rooms">
+            <div>
+                <ul id="room-list" data-bind="foreach: chatRooms">
+                    <li><a href="#" data-bind="text: $data.name, clickLink: joinRoom"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="user">
+            <div class="user-avatar">
+                <img class="avatar-icon2" src="~/Content/icons/avatar1.png" data-bind="attr: { src: myAvatar() }" />
+            </div>
+            <div class="user-name">
+                <a href="#" data-bind="text: myName"></a>
+            </div>
+            <div class="user-signout">
+                @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <a href="#" title="Sign Out" id="logout"><span class="glyphicon glyphicon-log-out"></span></a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 left collapse" id="chatRooms">
+        <div class="header" style="height:40px;">
             <h5>Chat Rooms</h5>
             <a href="#" id="create-room" data-toggle="modal" data-target="#create-room-modal"><span class="glyphicon glyphicon-plus"></span></a>
         </div>
@@ -48,7 +79,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xs-12 col-sm-8 col-md-7 middle">
+    <div class="col-xs-12 col-sm-8 col-md-7 middle" id="dialogBox">
         <div class="chat-header">
             <h5 id="joinedRoom">Lobby</h5>
             <button data-toggle="modal" data-target="#remove-room-modal" class="btnDeleteRoom glyphicon glyphicon-remove"></button>
@@ -74,7 +105,7 @@
             </ul>
         </div>
         <div class="chat-input">
-            <i class="glyphicon glyphicon-send"></i>
+            <i class="glyphicon glyphicon-send" id="sendMessage"></i>
             <div class="actions">
                 <label for="btnUpload" class="custom-file-upload">
                     <img src="~/Content/icons/photo1.png" alt="" />
@@ -177,9 +208,4 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="alert alert-dismissible alert-warning hidden" id="errorAlert">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <p data-bind="text:serverInfoMessage"></p>
 </div>
